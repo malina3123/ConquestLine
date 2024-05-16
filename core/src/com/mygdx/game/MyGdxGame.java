@@ -52,12 +52,13 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		// Создание кнопки генерации карты
-		generateButton = new TextButton("Generate Map", skin);
+		generateButton = new TextButton("Создать новую карту", skin);
 		generateButton.setPosition(Gdx.graphics.getWidth() / 2f - generateButton.getWidth() / 2f, Gdx.graphics.getHeight() - generateButton.getHeight() - 10);
 		generateButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				map = new Map(20, 15); // Генерация новой карты
+				units.clear(); // Очистка списка юнитов
 				centerCamera();
 			}
 		});
