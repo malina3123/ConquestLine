@@ -6,15 +6,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +26,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	Stage stage;
 	Skin skin;
 	TextButton generateButton;
+	InputHandler inputHandler;
+	ShapeRenderer shapeRenderer;
+	List<Vector2> highlightedTiles;
 
 	@Override
 	public void create() {
@@ -34,6 +36,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		map = new Map(20, 15); // карта 20x15 тайлов
 		units = new ArrayList<>();
 		selectedUnit = null;
+		shapeRenderer = new ShapeRenderer();
+		highlightedTiles = new ArrayList<>();
 
 		// Инициализация камеры с увеличенным масштабом
 		camera = new OrthographicCamera();
@@ -65,6 +69,9 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Добавление кнопки на сцену
 		stage.addActor(generateButton);
+
+		// Инициализация обработчика ввода
+		inputHandler = new InputHandler(camera, map, units, this);
 	}
 
 	@Override
@@ -75,8 +82,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
-		handleInput();
-
 		batch.begin();
 		map.render(batch);
 		for (Unit unit : units) {
@@ -84,33 +89,33 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		batch.end();
 
+		// Отображение радиуса перемещения
+		renderHighlightedTiles();
+
 		// Отображение интерфейса
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 	}
 
-	private void handleInput() {
-		if (Gdx.input.justTouched() && stage.hit(Gdx.input.getX(), Gdx.input.getY(), true) == null) { // Проверка нажатия вне UI
-			Vector3 touchPos3D = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos3D);
-			Vector2 touchPos = new Vector2(touchPos3D.x, touchPos3D.y);
+	private void renderHighlightedTiles() {
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+		shapeRenderer.setColor(1, 1, 0, 1); // Желтый цвет
 
-			if (selectedUnit == null) {
-				// Проверка нажатия на здание для найма юнита
-				for (Building building : map.getBuildings()) {
-					if (building.getPosition().dst(touchPos) < 32) {
-						units.add(building.hireUnit());
-						break;
-					}
-				}
-			} else {
-				// Перемещение выбранного юнита
-				if (selectedUnit.canMoveTo(touchPos.x, touchPos.y)) {
-					selectedUnit.moveTo(touchPos.x, touchPos.y);
-					selectedUnit = null;
-				}
-			}
+		for (Vector2 tile : highlightedTiles) {
+			shapeRenderer.rect(tile.x, tile.y, map.getTileSize(), map.getTileSize());
 		}
+
+		shapeRenderer.end();
+	}
+
+	public void setHighlightedTiles(List<Vector2> tiles) {
+		highlightedTiles.clear();
+		highlightedTiles.addAll(tiles);
+	}
+
+	public void clearHighlightedTiles() {
+		highlightedTiles.clear();
 	}
 
 	private void centerCamera() {
@@ -137,5 +142,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		stage.dispose();
 		skin.dispose();
+		shapeRenderer.dispose();
 	}
 }

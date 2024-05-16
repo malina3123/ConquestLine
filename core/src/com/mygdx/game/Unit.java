@@ -23,12 +23,23 @@ public class Unit {
         position.set(x, y);
     }
 
-    public boolean canMoveTo(float x, float y) {
-        return position.dst(x, y) <= moveRange;
+    public boolean canMoveTo(float x, float y, Map map) {
+        int range = moveRange / map.getTileSize();
+        int currentX = (int) (position.x / map.getTileSize());
+        int currentY = (int) (position.y / map.getTileSize());
+        int targetX = (int) (x / map.getTileSize());
+        int targetY = (int) (y / map.getTileSize());
+
+        return Math.abs(targetX - currentX) <= range && Math.abs(targetY - currentY) <= range &&
+                targetX >= 0 && targetX < map.getWidth() && targetY >= 0 && targetY < map.getHeight();
     }
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public int getMoveRange() {
+        return moveRange;
     }
 
     public void dispose() {
