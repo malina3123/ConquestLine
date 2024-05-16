@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -60,7 +59,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		generateButton.setPosition(Gdx.graphics.getWidth() / 2f - generateButton.getWidth() / 2f, Gdx.graphics.getHeight() - generateButton.getHeight() - 10);
 		generateButton.addListener(new ClickListener() {
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
 				map = new Map(20, 15); // Генерация новой карты
 				units.clear(); // Очистка списка юнитов
 				centerCamera();
@@ -72,6 +71,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Инициализация обработчика ввода
 		inputHandler = new InputHandler(camera, map, units, this);
+		Gdx.input.setInputProcessor(inputHandler);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		batch.end();
 
-		// Отображение радиуса перемещения
+		// Отображение обводки выбранных клеток
 		renderHighlightedTiles();
 
 		// Отображение интерфейса
@@ -103,19 +103,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		shapeRenderer.setColor(1, 1, 0, 1); // Желтый цвет
 
 		for (Vector2 tile : highlightedTiles) {
-			shapeRenderer.rect(tile.x, tile.y, map.getTileSize(), map.getTileSize());
+			if (!map.isCellOccupied(tile)) {
+				shapeRenderer.rect(tile.x, tile.y, map.getTileSize(), map.getTileSize());
+			}
 		}
 
 		shapeRenderer.end();
-	}
-
-	public void setHighlightedTiles(List<Vector2> tiles) {
-		highlightedTiles.clear();
-		highlightedTiles.addAll(tiles);
-	}
-
-	public void clearHighlightedTiles() {
-		highlightedTiles.clear();
 	}
 
 	private void centerCamera() {
@@ -123,6 +116,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		float mapHeight = map.getHeight() * map.getTileSize();
 		camera.position.set(mapWidth / 2, mapHeight / 2, 0);
 		camera.update();
+	}
+
+	public void setHighlightedTiles(List<Vector2> tiles) {
+		highlightedTiles = tiles;
+	}
+
+	public void clearHighlightedTiles() {
+		highlightedTiles.clear();
 	}
 
 	@Override
@@ -142,6 +143,5 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		stage.dispose();
 		skin.dispose();
-		shapeRenderer.dispose();
 	}
 }

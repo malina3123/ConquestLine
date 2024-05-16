@@ -9,6 +9,7 @@ import java.util.Random;
 public class Map {
     private Tile[][] tiles;
     private List<Building> buildings;
+    private List<Unit> units;
     private int width;
     private int height;
     private int tileSize = 32;
@@ -18,6 +19,7 @@ public class Map {
         this.height = height;
         tiles = new Tile[width][height];
         buildings = new ArrayList<>();
+        units = new ArrayList<>();
         generateMap();
     }
 
@@ -54,6 +56,10 @@ public class Map {
         return buildings;
     }
 
+    public List<Unit> getUnits() {
+        return units;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -66,14 +72,24 @@ public class Map {
         return tileSize;
     }
 
+    public boolean isCellOccupied(Vector2 position) {
+        for (Unit unit : units) {
+            if (unit.getPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Vector2> getMovableTiles(Unit unit) {
         List<Vector2> tiles = new ArrayList<>();
         Vector2 position = unit.getPosition();
         int range = unit.getMoveRange() / tileSize;
         for (int x = (int) (position.x / tileSize) - range; x <= (int) (position.x / tileSize) + range; x++) {
             for (int y = (int) (position.y / tileSize) - range; y <= (int) (position.y / tileSize) + range; y++) {
-                if (x >= 0 && x < width && y >= 0 && y < height) {
-                    tiles.add(new Vector2(x * tileSize, y * tileSize));
+                Vector2 tile = new Vector2(x * tileSize, y * tileSize);
+                if (x >= 0 && x < width && y >= 0 && y < height && !isCellOccupied(tile)) {
+                    tiles.add(tile);
                 }
             }
         }
