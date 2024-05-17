@@ -5,6 +5,11 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
+import com.badlogic.gdx.math.Vector2;
+import java.util.Random;
+
 
 public class Map {
     private Tile[][] tiles;
@@ -22,6 +27,26 @@ public class Map {
         units = new ArrayList<>();
         generateMap();
     }
+    private boolean isPositionValid(Vector2 position, Set<Vector2> occupiedPositions) {
+        int[][] directions = {
+                {-1, -1}, {-1, 0}, {-1, 1},
+                {0, -1},         {0, 1},
+                {1, -1}, {1, 0}, {1, 1}
+        };
+
+        if (occupiedPositions.contains(position)) {
+            return false;
+        }
+
+        for (int[] dir : directions) {
+            Vector2 neighborPosition = new Vector2(position.x + dir[0] * tileSize, position.y + dir[1] * tileSize);
+            if (occupiedPositions.contains(neighborPosition)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private void generateMap() {
         Random random = new Random();
@@ -32,18 +57,34 @@ public class Map {
             }
         }
 
-        // Генерация зданий
+        // Генерация зданий для игрока 1 и игрока 2
         buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", 0 * tileSize, 0 * tileSize));
         buildings.get(0).setOwner(1);
         buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", (width - 1) * tileSize, (height - 1) * tileSize));
         buildings.get(1).setOwner(2);
 
-        for (int i = 2; i < 5; i++) {
-            int x = random.nextInt(width);
-            int y = random.nextInt(height);
-            buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", x * tileSize, y * tileSize));
+        // Генерация нейтральных зданий
+        int neutralBuildingCount = 8;
+        Set<Vector2> occupiedPositions = new HashSet<>();
+        occupiedPositions.add(new Vector2(0, 0));
+        occupiedPositions.add(new Vector2((width - 1) * tileSize, (height - 1) * tileSize));
+
+        for (int i = 0; i < neutralBuildingCount; i++) {
+            boolean positionFound = false;
+            while (!positionFound) {
+                int x = random.nextInt(width);
+                int y = random.nextInt(height);
+                Vector2 candidatePosition = new Vector2(x * tileSize, y * tileSize);
+
+                if (isPositionValid(candidatePosition, occupiedPositions)) {
+                    buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", x * tileSize, y * tileSize));
+                    occupiedPositions.add(candidatePosition);
+                    positionFound = true;
+                }
+            }
         }
     }
+
 
     public void render(SpriteBatch batch) {
         for (int x = 0; x < width; x++) {
