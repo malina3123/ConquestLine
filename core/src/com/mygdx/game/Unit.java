@@ -10,8 +10,8 @@ public class Unit {
     private int moveRange;
     private int owner; // Владелец юнита (1 или 2)
 
-    public Unit(String texturePath, float x, float y, int moveRange, int owner) {
-        texture = new Texture(texturePath);
+    public Unit(Texture texture, float x, float y, int moveRange, int owner) {
+        this.texture = texture;
         position = new Vector2(x, y);
         this.moveRange = moveRange;
         this.owner = owner;
