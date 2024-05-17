@@ -33,12 +33,18 @@ public class Map {
         }
 
         // Генерация зданий
-        for (int i = 0; i < 5; i++) {
+        buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", 0 * tileSize, 0 * tileSize));
+        buildings.get(0).setOwner(1);
+        buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", (width - 1) * tileSize, (height - 1) * tileSize));
+        buildings.get(1).setOwner(2);
+
+        for (int i = 2; i < 5; i++) {
             int x = random.nextInt(width);
             int y = random.nextInt(height);
-            buildings.add(new Building("building.png", x * tileSize, y * tileSize));
+            buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", x * tileSize, y * tileSize));
         }
     }
+
 
     public void render(SpriteBatch batch) {
         for (int x = 0; x < width; x++) {

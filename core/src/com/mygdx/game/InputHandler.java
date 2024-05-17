@@ -24,7 +24,6 @@ public class InputHandler extends InputAdapter {
         Gdx.input.setInputProcessor(this);
     }
 
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos3D = new Vector3(screenX, screenY, 0);
         camera.unproject(touchPos3D);
@@ -43,15 +42,26 @@ public class InputHandler extends InputAdapter {
             for (Building building : map.getBuildings()) {
                 if (building.getPosition().dst(touchPos) < 32) {
                     if (!map.isCellOccupied(building.getPosition())) {
-                        units.add(building.hireUnit(gameState.getCurrentPlayer()));
+                        Unit newUnit = building.hireUnit(gameState.getCurrentPlayer());
+                        if (newUnit != null) {
+                            units.add(newUnit);
+                        }
                     }
                     return true;
                 }
             }
         } else {
-            // Перемещение выбранного юнита
+            // Перемещение выбранного юнита и захват здания
             if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
                 selectedUnit.moveTo(touchPos.x, touchPos.y);
+
+                // Проверка на захват здания
+                for (Building building : map.getBuildings()) {
+                    if (building.getPosition().dst(selectedUnit.getPosition()) < 16) {
+                        building.setOwner(selectedUnit.getOwner());
+                    }
+                }
+
                 selectedUnit = null;
                 game.clearHighlightedTiles();
                 gameState.endTurn();
