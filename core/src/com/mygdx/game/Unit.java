@@ -8,11 +8,13 @@ public class Unit {
     private Texture texture;
     private Vector2 position;
     private int moveRange;
+    private int owner; // Владелец юнита (1 или 2)
 
-    public Unit(String texturePath, float x, float y, int moveRange) {
+    public Unit(String texturePath, float x, float y, int moveRange, int owner) {
         texture = new Texture(texturePath);
         position = new Vector2(x, y);
         this.moveRange = moveRange;
+        this.owner = owner;
     }
 
     public void render(SpriteBatch batch) {
@@ -40,6 +42,10 @@ public class Unit {
 
     public int getMoveRange() {
         return moveRange;
+    }
+
+    public int getOwner() {
+        return owner;
     }
 
     public void dispose() {

@@ -21,8 +21,8 @@ public class Building {
         return position;
     }
 
-    public Unit hireUnit() {
-        return new Unit("unit.png", position.x, position.y, 3 * 32);
+    public Unit hireUnit(int owner) {
+        return new Unit("unit.png", position.x, position.y, 3 * 32, owner);
     }
 
     public void dispose() {

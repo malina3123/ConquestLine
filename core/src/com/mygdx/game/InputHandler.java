@@ -13,12 +13,14 @@ public class InputHandler extends InputAdapter {
     private List<Unit> units;
     private Unit selectedUnit;
     private MyGdxGame game;
+    private GameState gameState;
 
-    public InputHandler(OrthographicCamera camera, Map map, List<Unit> units, MyGdxGame game) {
+    public InputHandler(OrthographicCamera camera, Map map, List<Unit> units, MyGdxGame game, GameState gameState) {
         this.camera = camera;
         this.map = map;
         this.units = units;
         this.game = game;
+        this.gameState = gameState;
         Gdx.input.setInputProcessor(this);
     }
 
@@ -29,9 +31,9 @@ public class InputHandler extends InputAdapter {
         Vector2 touchPos = new Vector2(touchPos3D.x, touchPos3D.y);
 
         if (selectedUnit == null) {
-            // Проверка нажатия на юнита
+            // Проверка нажатия на юнита текущего игрока
             for (Unit unit : units) {
-                if (unit.getPosition().dst(touchPos) < 16) {
+                if (unit.getPosition().dst(touchPos) < 16 && unit.getOwner() == gameState.getCurrentPlayer()) {
                     selectedUnit = unit;
                     game.setHighlightedTiles(map.getMovableTiles(unit));
                     return true;
@@ -41,7 +43,7 @@ public class InputHandler extends InputAdapter {
             for (Building building : map.getBuildings()) {
                 if (building.getPosition().dst(touchPos) < 32) {
                     if (!map.isCellOccupied(building.getPosition())) {
-                        units.add(building.hireUnit());
+                        units.add(building.hireUnit(gameState.getCurrentPlayer()));
                     }
                     return true;
                 }
@@ -52,6 +54,7 @@ public class InputHandler extends InputAdapter {
                 selectedUnit.moveTo(touchPos.x, touchPos.y);
                 selectedUnit = null;
                 game.clearHighlightedTiles();
+                gameState.endTurn();
             } else {
                 selectedUnit = null;
                 game.clearHighlightedTiles();

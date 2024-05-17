@@ -28,6 +28,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	InputHandler inputHandler;
 	ShapeRenderer shapeRenderer;
 	List<Vector2> highlightedTiles;
+	GameState gameState;
 
 	@Override
 	public void create() {
@@ -37,6 +38,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		selectedUnit = null;
 		shapeRenderer = new ShapeRenderer();
 		highlightedTiles = new ArrayList<>();
+		gameState = new GameState();
 
 		// Инициализация камеры с увеличенным масштабом
 		camera = new OrthographicCamera();
@@ -70,7 +72,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		stage.addActor(generateButton);
 
 		// Инициализация обработчика ввода
-		inputHandler = new InputHandler(camera, map, units, this);
+		inputHandler = new InputHandler(camera, map, units, this, gameState);
 		Gdx.input.setInputProcessor(inputHandler);
 	}
 
