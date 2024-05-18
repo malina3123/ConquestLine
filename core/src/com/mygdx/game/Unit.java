@@ -22,7 +22,8 @@ public class Unit {
     }
 
     public void moveTo(float x, float y) {
-        position.set(x, y);
+        int tileSize = 32;
+        position.set(x + tileSize / 2 - texture.getWidth() / 2, y + tileSize / 2 - texture.getHeight() / 2);
     }
 
     public boolean canMoveTo(float x, float y, Map map) {

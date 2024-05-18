@@ -119,8 +119,14 @@ public class Map {
     }
 
     public boolean isCellOccupied(Vector2 position) {
+        int tileSize = getTileSize();
+        float centerX = (float) Math.floor(position.x / tileSize) * tileSize + tileSize / 2;
+        float centerY = (float) Math.floor(position.y / tileSize) * tileSize + tileSize / 2;
+
         for (Unit unit : units) {
-            if (unit.getPosition().equals(position)) {
+            Vector2 unitPos = unit.getPosition();
+            if (Math.floor(unitPos.x / tileSize) * tileSize + tileSize / 2 == centerX &&
+                    Math.floor(unitPos.y / tileSize) * tileSize + tileSize / 2 == centerY) {
                 return true;
             }
         }

@@ -53,7 +53,11 @@ public class InputHandler extends InputAdapter {
         } else {
             // Перемещение выбранного юнита и захват здания
             if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
-                selectedUnit.moveTo(touchPos.x, touchPos.y);
+                // Перемещение в центр тайла
+                int tileSize = map.getTileSize();
+                float targetX = (float) Math.floor(touchPos.x / tileSize) * tileSize;
+                float targetY = (float) Math.floor(touchPos.y / tileSize) * tileSize;
+                selectedUnit.moveTo(targetX, targetY);
 
                 // Проверка на захват здания
                 for (Building building : map.getBuildings()) {
@@ -72,6 +76,7 @@ public class InputHandler extends InputAdapter {
         }
         return false;
     }
+
 
     public Unit getSelectedUnit() {
         return selectedUnit;
