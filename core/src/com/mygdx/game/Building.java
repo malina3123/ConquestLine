@@ -17,6 +17,7 @@ public class Building {
     private int owner; // 0 - нейтральное, 1 - игрок 1, 2 - игрок 2
     private int defense; // Защита здания
     private int health; // Здоровье здания
+    private int maxHealth; // Максимальное здоровье здания
     private BitmapFont font;
 
     public Building(String neutralTexturePath, String player1TexturePath, String player2TexturePath, String player1UnitTexturePath, String player2UnitTexturePath, float x, float y) {
@@ -32,7 +33,8 @@ public class Building {
         // Инициализация случайного значения защиты и установка здоровья на 200
         Random random = new Random();
         defense = random.nextInt(81) + 10; // Диапазон от 10 до 90
-        health = 200; // Здоровье по умолчанию
+        maxHealth = 200; // Максимальное здоровье по умолчанию
+        health = maxHealth; // Здоровье по умолчанию
 
         font = new BitmapFont(); // Инициализация шрифта для отображения текста
     }
@@ -71,6 +73,15 @@ public class Building {
             default:
                 texture = neutralTexture;
                 break;
+        }
+        health = maxHealth; // Обновляем здоровье до максимального при смене владельца
+    }
+
+    public void receiveDamage(int damage, int attackerOwner) {
+        health -= damage;
+        if (health <= 0) {
+            health = 0;
+            setOwner(attackerOwner); // Здание меняет владельца на атакующего игрока
         }
     }
 
