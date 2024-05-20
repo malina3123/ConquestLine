@@ -64,6 +64,19 @@ public class InputHandler extends InputAdapter {
                     return true;
                 }
             }
+            // Проверка нажатия на здание для атаки
+            for (Building building : map.getBuildings()) {
+                if (building.getPosition().dst(touchPos) < 32 && building.getOwner() != gameState.getCurrentPlayer()) {
+                    selectedUnit.attack(building);
+                    if (building.getHealth() <= 0) {
+                        building.setOwner(selectedUnit.getOwner());
+                    }
+                    selectedUnit = null;
+                    game.clearHighlightedTiles();
+                    gameState.endTurn();
+                    return true;
+                }
+            }
             // Перемещение выбранного юнита и захват здания
             if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
                 int tileSize = map.getTileSize();
