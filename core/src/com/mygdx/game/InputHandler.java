@@ -51,15 +51,23 @@ public class InputHandler extends InputAdapter {
                 }
             }
         } else {
+            // Проверка нажатия на вражеского юнита для атаки
+            for (Unit unit : units) {
+                if (unit.getPosition().dst(touchPos) < 16 && unit.getOwner() != gameState.getCurrentPlayer()) {
+                    selectedUnit.attack(unit);
+                    selectedUnit = null;
+                    game.clearHighlightedTiles();
+                    gameState.endTurn();
+                    return true;
+                }
+            }
             // Перемещение выбранного юнита и захват здания
             if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
-                // Перемещение в центр тайла
                 int tileSize = map.getTileSize();
                 float targetX = (float) Math.floor(touchPos.x / tileSize) * tileSize;
                 float targetY = (float) Math.floor(touchPos.y / tileSize) * tileSize;
                 selectedUnit.moveTo(targetX, targetY);
 
-                // Проверка на захват здания
                 for (Building building : map.getBuildings()) {
                     if (building.getPosition().dst(selectedUnit.getPosition()) < 16) {
                         building.setOwner(selectedUnit.getOwner());
@@ -76,7 +84,6 @@ public class InputHandler extends InputAdapter {
         }
         return false;
     }
-
 
     public Unit getSelectedUnit() {
         return selectedUnit;
