@@ -61,8 +61,9 @@ public class Unit {
         health -= damage;
         if (health <= 0) {
             health = 0;
-            // Логика смерти юнита (если требуется)
+            die();
         }
+
     }
 
     public Vector2 getPosition() {
@@ -89,8 +90,15 @@ public class Unit {
         return attack;
     }
 
+
+    private void die() {
+        // Можно добавить дополнительные действия при смерти юнита, если нужно
+        System.out.println("Unit has died");
+    }
+
     public void dispose() {
         texture.dispose();
         font.dispose();
     }
+
 }

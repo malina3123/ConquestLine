@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import java.util.Iterator;
 import java.util.List;
 
 public class InputHandler extends InputAdapter {
@@ -24,6 +25,7 @@ public class InputHandler extends InputAdapter {
         Gdx.input.setInputProcessor(this);
     }
 
+    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos3D = new Vector3(screenX, screenY, 0);
         camera.unproject(touchPos3D);
@@ -55,6 +57,7 @@ public class InputHandler extends InputAdapter {
             for (Unit unit : units) {
                 if (unit.getPosition().dst(touchPos) < 16 && unit.getOwner() != gameState.getCurrentPlayer()) {
                     selectedUnit.attack(unit);
+                    removeDeadUnits();
                     selectedUnit = null;
                     game.clearHighlightedTiles();
                     gameState.endTurn();
@@ -83,6 +86,16 @@ public class InputHandler extends InputAdapter {
             }
         }
         return false;
+    }
+
+    private void removeDeadUnits() {
+        Iterator<Unit> iterator = units.iterator();
+        while (iterator.hasNext()) {
+            Unit unit = iterator.next();
+            if (unit.getHealth() <= 0) {
+                iterator.remove();
+            }
+        }
     }
 
     public Unit getSelectedUnit() {
