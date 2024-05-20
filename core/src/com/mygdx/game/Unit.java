@@ -60,9 +60,8 @@ public class Unit {
     public void attack(Building building) {
         int damage = attack - (building.getDefense() * attack / 100);
         damage = Math.max(1, damage); // Урон не может быть меньше 1
-        building.receiveDamage(damage);
+        building.receiveDamage(damage, owner); // Передаем владельца атакующего
     }
-
 
     public void receiveDamage(int damage) {
         health -= damage;
