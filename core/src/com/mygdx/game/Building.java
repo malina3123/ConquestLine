@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import java.util.Random;
 
 public class Building {
     private Texture texture;
@@ -13,6 +15,9 @@ public class Building {
     private Texture player1UnitTexture;
     private Texture player2UnitTexture;
     private int owner; // 0 - нейтральное, 1 - игрок 1, 2 - игрок 2
+    private int defense; // Защита здания
+    private int health; // Здоровье здания
+    private BitmapFont font;
 
     public Building(String neutralTexturePath, String player1TexturePath, String player2TexturePath, String player1UnitTexturePath, String player2UnitTexturePath, float x, float y) {
         neutralTexture = new Texture(neutralTexturePath);
@@ -23,10 +28,19 @@ public class Building {
         texture = neutralTexture;
         position = new Vector2(x, y);
         owner = 0; // По умолчанию нейтральное
+
+        // Инициализация случайного значения защиты и установка здоровья на 200
+        Random random = new Random();
+        defense = random.nextInt(81) + 10; // Диапазон от 10 до 90
+        health = 200; // Здоровье по умолчанию
+
+        font = new BitmapFont(); // Инициализация шрифта для отображения текста
     }
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
+        // Отображение значения здоровья и защиты над зданием
+        font.draw(batch, "HP: " + health + " DEF: " + defense, position.x, position.y + texture.getHeight() + 15);
     }
 
     public Vector2 getPosition() {
@@ -60,11 +74,20 @@ public class Building {
         }
     }
 
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
     public void dispose() {
         neutralTexture.dispose();
         player1Texture.dispose();
         player2Texture.dispose();
         player1UnitTexture.dispose();
         player2UnitTexture.dispose();
+        font.dispose(); // Освобождение ресурса шрифта
     }
 }
