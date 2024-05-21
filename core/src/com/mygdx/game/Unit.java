@@ -51,16 +51,28 @@ public class Unit {
                 targetX >= 0 && targetX < map.getWidth() && targetY >= 0 && targetY < map.getHeight();
     }
 
+    public boolean isWithinAttackRange(Vector2 targetPosition) {
+        float distance = position.dst(targetPosition);
+        int tileSize = 32;
+        int attackRange = 2 * tileSize; // Дистанция атаки в клетках (2 клетки)
+
+        return distance <= attackRange;
+    }
+
     public void attack(Unit target) {
-        int damage = attack - (target.getDefense() * attack / 100);
-        damage = Math.max(1, damage); // Урон не может быть меньше 1
-        target.receiveDamage(damage);
+        if (isWithinAttackRange(target.getPosition())) {
+            int damage = attack - (target.getDefense() * attack / 100);
+            damage = Math.max(1, damage); // Урон не может быть меньше 1
+            target.receiveDamage(damage);
+        }
     }
 
     public void attack(Building building) {
-        int damage = attack - (building.getDefense() * attack / 100);
-        damage = Math.max(1, damage); // Урон не может быть меньше 1
-        building.receiveDamage(damage, owner); // Передаем владельца атакующего
+        if (isWithinAttackRange(building.getPosition())) {
+            int damage = attack - (building.getDefense() * attack / 100);
+            damage = Math.max(1, damage); // Урон не может быть меньше 1
+            building.receiveDamage(damage, owner); // Передаем владельца атакующего
+        }
     }
 
     public void receiveDamage(int damage) {
