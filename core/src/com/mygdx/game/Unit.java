@@ -59,6 +59,10 @@ public class Unit {
         return x >= unitX && x <= unitX + width && y >= unitY && y <= unitY + height;
     }
 
+    public boolean isOnSamePosition(Unit other) {
+        return this.position.epsilonEquals(other.getPosition(), 0.1f) && this.owner == other.getOwner();
+    }
+
     public boolean isWithinAttackRange(Vector2 targetPosition) {
         float distance = position.dst(targetPosition);
         int tileSize = 32;

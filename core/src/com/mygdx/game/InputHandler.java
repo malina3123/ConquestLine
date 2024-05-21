@@ -25,6 +25,7 @@ public class InputHandler extends InputAdapter {
         Gdx.input.setInputProcessor(this);
     }
 
+    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos3D = new Vector3(screenX, screenY, 0);
         camera.unproject(touchPos3D);
@@ -78,6 +79,13 @@ public class InputHandler extends InputAdapter {
             }
             // Перемещение выбранного юнита и захват здания
             if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
+                // Проверка на наличие союзного юнита в целевой клетке
+                for (Unit unit : units) {
+                    if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer()) {
+                        return false; // Если целевая клетка занята союзным юнитом, просто не реагируем
+                    }
+                }
+
                 int tileSize = map.getTileSize();
                 float targetX = (float) Math.floor(touchPos.x / tileSize) * tileSize;
                 float targetY = (float) Math.floor(touchPos.y / tileSize) * tileSize;
