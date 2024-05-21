@@ -51,6 +51,14 @@ public class Unit {
                 targetX >= 0 && targetX < map.getWidth() && targetY >= 0 && targetY < map.getHeight();
     }
 
+    public boolean contains(float x, float y) {
+        float unitX = position.x;
+        float unitY = position.y;
+        float width = texture.getWidth();
+        float height = texture.getHeight();
+        return x >= unitX && x <= unitX + width && y >= unitY && y <= unitY + height;
+    }
+
     public boolean isWithinAttackRange(Vector2 targetPosition) {
         float distance = position.dst(targetPosition);
         int tileSize = 32;

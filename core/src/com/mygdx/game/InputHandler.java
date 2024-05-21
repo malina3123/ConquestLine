@@ -25,7 +25,6 @@ public class InputHandler extends InputAdapter {
         Gdx.input.setInputProcessor(this);
     }
 
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos3D = new Vector3(screenX, screenY, 0);
         camera.unproject(touchPos3D);
@@ -34,7 +33,7 @@ public class InputHandler extends InputAdapter {
         if (selectedUnit == null) {
             // Проверка нажатия на юнита текущего игрока
             for (Unit unit : units) {
-                if (unit.getPosition().dst(touchPos) < 16 && unit.getOwner() == gameState.getCurrentPlayer()) {
+                if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer()) {
                     selectedUnit = unit;
                     game.setHighlightedTiles(map.getMovableTiles(unit));
                     return true;
@@ -42,7 +41,7 @@ public class InputHandler extends InputAdapter {
             }
             // Проверка нажатия на здание для найма юнита
             for (Building building : map.getBuildings()) {
-                if (building.getPosition().dst(touchPos) < 32) {
+                if (building.contains(touchPos.x, touchPos.y)) {
                     if (!map.isCellOccupied(building.getPosition())) {
                         Unit newUnit = building.hireUnit(gameState.getCurrentPlayer());
                         if (newUnit != null) {
@@ -55,7 +54,7 @@ public class InputHandler extends InputAdapter {
         } else {
             // Проверка нажатия на вражеского юнита для атаки
             for (Unit unit : units) {
-                if (unit.getPosition().dst(touchPos) < 16 && unit.getOwner() != gameState.getCurrentPlayer()) {
+                if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() != gameState.getCurrentPlayer()) {
                     selectedUnit.attack(unit);
                     removeDeadUnits();
                     selectedUnit = null;
@@ -66,7 +65,7 @@ public class InputHandler extends InputAdapter {
             }
             // Проверка нажатия на здание для атаки
             for (Building building : map.getBuildings()) {
-                if (building.getPosition().dst(touchPos) < 32 && building.getOwner() != gameState.getCurrentPlayer()) {
+                if (building.contains(touchPos.x, touchPos.y) && building.getOwner() != gameState.getCurrentPlayer()) {
                     selectedUnit.attack(building);
                     if (building.getHealth() <= 0) {
                         building.setOwner(selectedUnit.getOwner());

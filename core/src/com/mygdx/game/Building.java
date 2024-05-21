@@ -57,6 +57,14 @@ public class Building {
         return null;
     }
 
+    public boolean contains(float x, float y) {
+        float buildingX = position.x;
+        float buildingY = position.y;
+        float width = texture.getWidth();
+        float height = texture.getHeight();
+        return x >= buildingX && x <= buildingX + width && y >= buildingY && y <= buildingY + height;
+    }
+
     public int getOwner() {
         return owner;
     }
