@@ -89,13 +89,14 @@ public class MyGdxGame extends ApplicationAdapter {
 	private void initializeGame() {
 		economy.setResources(1, 1000); // Установите начальные ресурсы для игрока 1
 		economy.setResources(2, 1000); // Установите начальные ресурсы для игрока 2
+		gameState.setCurrentPlayer(1); // Начинает игрок 1
 	}
 
 	private void createNewMap() {
 		map = new Map(20, 15);
 		units.clear();
 		centerCamera();
-		initializeGame(); // Инициализация ресурсов при создании новой карты
+		initializeGame(); // Инициализация ресурсов и начального игрока при создании новой карты
 	}
 
 	@Override

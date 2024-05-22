@@ -19,6 +19,10 @@ public class GameState {
         return currentPlayer;
     }
 
+    public void setCurrentPlayer(int player) {
+        this.currentPlayer = player;
+    }
+
     public void endTurn() {
         economy.endTurn(currentPlayer, buildings);
         currentPlayer = 3 - currentPlayer; // Переключаемся между 1 и 2
