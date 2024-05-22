@@ -148,6 +148,13 @@ public class Map {
         return tiles;
     }
 
+    public void clearMap() {
+        dispose();
+        tiles = new Tile[width][height];
+        buildings.clear();
+        units.clear();
+    }
+
     public void dispose() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {

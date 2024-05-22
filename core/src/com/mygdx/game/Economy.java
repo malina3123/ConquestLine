@@ -27,6 +27,10 @@ public class Economy {
         return false;
     }
 
+    public void setResources(int player, int amount) {
+        playerResources[player] = amount;
+    }
+
     public void endTurn(int player, List<Building> buildings) {
         int income = 0;
         for (Building building : buildings) {
