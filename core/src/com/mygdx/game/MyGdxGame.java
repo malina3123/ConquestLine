@@ -2,8 +2,11 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,6 +21,7 @@ import java.util.List;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
+	SpriteBatch textBatch; // Отдельный SpriteBatch для текста
 	Map map;
 	List<Unit> units;
 	Unit selectedUnit;
@@ -30,11 +34,12 @@ public class MyGdxGame extends ApplicationAdapter {
 	List<Vector2> highlightedTiles;
 	GameState gameState;
 	private Economy economy;
-
+	private BitmapFont font;
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
+		textBatch = new SpriteBatch(); // Инициализация отдельного SpriteBatch для текста
 		economy = new Economy();
 		map = new Map(20, 15); // карта 20x15 тайлов
 		units = new ArrayList<>();
@@ -42,6 +47,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 		highlightedTiles = new ArrayList<>();
 		gameState = new GameState(economy, map.getBuildings());
+
+		// Инициализация шрифта
+		font = new BitmapFont();
+		font.getData().setScale(1.5f); // При необходимости можно изменить масштаб
 
 		// Инициализация камеры с увеличенным масштабом
 		camera = new OrthographicCamera();
@@ -87,12 +96,31 @@ public class MyGdxGame extends ApplicationAdapter {
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
+		// Начинаем отрисовку карты и юнитов
 		batch.begin();
 		map.render(batch);
 		for (Unit unit : units) {
 			unit.render(batch);
 		}
 		batch.end();
+
+		// Отображение информации об экономике и текущем игроке слева от карты
+		String player1Info = "Player 1, Resources: " + economy.getResources(1);
+		String player2Info = "Player 2, Resources: " + economy.getResources(2);
+		String currentPlayerInfo = "Now is Player " + gameState.getCurrentPlayer() + " turn!";
+
+		// Координаты для отображения текста слева от карты
+		float x = 10;  // фиксированное смещение от левого края экрана
+		float y1 = Gdx.graphics.getHeight() - 10;
+		float y2 = Gdx.graphics.getHeight() - 30;
+		float y3 = Gdx.graphics.getHeight() - 50;
+
+		// Начинаем отрисовку текста, используя фиксированные координаты экрана
+		textBatch.begin();
+		font.draw(textBatch, player1Info, x, y1);
+		font.draw(textBatch, player2Info, x, y2);
+		font.draw(textBatch, currentPlayerInfo, x, y3);
+		textBatch.end();
 
 		// Отображение обводки выбранных клеток
 		renderHighlightedTiles();
@@ -142,11 +170,14 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
+		textBatch.dispose(); // Освобождение ресурсов текстового batch
 		map.dispose();
 		for (Unit unit : units) {
 			unit.dispose();
 		}
 		stage.dispose();
 		skin.dispose();
+		font.dispose(); // Освобождение ресурсов шрифта
+		shapeRenderer.dispose();
 	}
 }
