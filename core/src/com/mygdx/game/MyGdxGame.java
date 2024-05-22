@@ -29,16 +29,19 @@ public class MyGdxGame extends ApplicationAdapter {
 	ShapeRenderer shapeRenderer;
 	List<Vector2> highlightedTiles;
 	GameState gameState;
+	private Economy economy;
+
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
+		economy = new Economy();
 		map = new Map(20, 15); // карта 20x15 тайлов
 		units = new ArrayList<>();
 		selectedUnit = null;
 		shapeRenderer = new ShapeRenderer();
 		highlightedTiles = new ArrayList<>();
-		gameState = new GameState();
+		gameState = new GameState(economy, map.getBuildings());
 
 		// Инициализация камеры с увеличенным масштабом
 		camera = new OrthographicCamera();
@@ -72,7 +75,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		stage.addActor(generateButton);
 
 		// Инициализация обработчика ввода
-		inputHandler = new InputHandler(camera, map, units, this, gameState);
+		inputHandler = new InputHandler(camera, map, units, this, gameState, economy);
 		Gdx.input.setInputProcessor(inputHandler);
 	}
 

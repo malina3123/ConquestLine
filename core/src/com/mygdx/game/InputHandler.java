@@ -15,13 +15,16 @@ public class InputHandler extends InputAdapter {
     private Unit selectedUnit;
     private MyGdxGame game;
     private GameState gameState;
+    private Economy economy;
 
-    public InputHandler(OrthographicCamera camera, Map map, List<Unit> units, MyGdxGame game, GameState gameState) {
+
+    public InputHandler(OrthographicCamera camera, Map map, List<Unit> units, MyGdxGame game, GameState gameState, Economy economy) {
         this.camera = camera;
         this.map = map;
         this.units = units;
         this.game = game;
         this.gameState = gameState;
+        this.economy = economy;
         Gdx.input.setInputProcessor(this);
     }
 
@@ -44,9 +47,14 @@ public class InputHandler extends InputAdapter {
             for (Building building : map.getBuildings()) {
                 if (building.contains(touchPos.x, touchPos.y)) {
                     if (!map.isCellOccupied(building.getPosition())) {
-                        Unit newUnit = building.hireUnit(gameState.getCurrentPlayer());
-                        if (newUnit != null) {
-                            units.add(newUnit);
+                        int currentPlayer = gameState.getCurrentPlayer();
+                        if (economy.spendResources(currentPlayer, building.getUnitCost())) {
+                            Unit newUnit = building.hireUnit(currentPlayer);
+                            if (newUnit != null) {
+                                units.add(newUnit);
+                            }
+                        } else {
+                            System.out.println("Недостаточно ресурсов для найма юнита!");
                         }
                     }
                     return true;

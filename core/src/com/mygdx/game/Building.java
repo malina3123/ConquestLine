@@ -19,6 +19,7 @@ public class Building {
     private int health; // Здоровье здания
     private int maxHealth; // Максимальное здоровье здания
     private BitmapFont font;
+    private int unitCost = 200;
 
     public Building(String neutralTexturePath, String player1TexturePath, String player2TexturePath, String player1UnitTexturePath, String player2UnitTexturePath, float x, float y) {
         neutralTexture = new Texture(neutralTexturePath);
@@ -93,6 +94,10 @@ public class Building {
             health = 0;
             setOwner(attackerOwner); // Здание меняет владельца на атакующего игрока
         }
+    }
+
+    public int getUnitCost() {
+        return unitCost;
     }
 
     public int getDefense() {
