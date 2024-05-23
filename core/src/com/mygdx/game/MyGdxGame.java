@@ -112,6 +112,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		units = map.getUnits(); // Обновление списка юнитов
 		gameState.setBuildings(map.getBuildings());
 		inputHandler.updateMapAndUnits(map, units); // Обновление карты и юнитов в обработчике ввода
+
+		// Сброс ресурсов игроков
+		economy.resetResources();
+
 		centerCamera();
 		initializeGame(); // Инициализация начального игрока при создании новой карты
 	}
@@ -188,7 +192,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		camera.setToOrtho(false, width / 1.5f, height / 1.5f);
-		centerCamera();
+		centerCamera(); // Центрирование камеры при изменении размера окна
 		stage.getViewport().update(width, height, true);
 		generateButton.setPosition(width / 2f - generateButton.getWidth() / 2f, height - generateButton.getHeight() - 10);
 		endTurnButton.setPosition(width / 2f - endTurnButton.getWidth() / 2f, height - endTurnButton.getHeight() - 70);
@@ -199,13 +203,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.dispose();
 		textBatch.dispose();
 		map.dispose();
-		for (Unit unit : units) {
-			unit.dispose();
-		}
 		shapeRenderer.dispose();
 		stage.dispose();
-		if (skin != null) {
-			skin.dispose();
-		}
+		skin.dispose();
 	}
 }

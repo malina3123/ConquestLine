@@ -133,12 +133,6 @@ public class InputHandler extends InputAdapter {
         return false;
     }
 
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        camera.translate(-Gdx.input.getDeltaX(), Gdx.input.getDeltaY());
-        camera.update();
-        return true;
-    }
 
 
 

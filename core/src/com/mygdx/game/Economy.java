@@ -40,4 +40,10 @@ public class Economy {
         }
         addResources(player, income);
     }
+
+    // Метод для сброса ресурсов игроков к начальным значениям
+    public void resetResources() {
+        playerResources[1] = 1000; // Начальные ресурсы игрока 1
+        playerResources[2] = 1000; // Начальные ресурсы игрока 2
+    }
 }
