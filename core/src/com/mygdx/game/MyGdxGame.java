@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -38,6 +37,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	GameState gameState;
 	private Economy economy;
 	private BitmapFont font;
+	private MusicManager musicManager;
 
 	@Override
 	public void create() {
@@ -101,6 +101,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputHandler));
 
 		initializeGame();
+
+		String[] musicFiles = {"music1.mp3", "music2.mp3", "music3.mp3"};
+		musicManager = new MusicManager(musicFiles);
 	}
 
 	private void initializeGame() {
@@ -203,8 +206,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.dispose();
 		textBatch.dispose();
 		map.dispose();
+		for (Unit unit : units) {
+			unit.dispose();
+		}
 		shapeRenderer.dispose();
 		stage.dispose();
 		skin.dispose();
+		musicManager.dispose();
 	}
 }
