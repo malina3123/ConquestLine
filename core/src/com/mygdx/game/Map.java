@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.HashSet;
 import java.util.Set;
-import com.badlogic.gdx.math.Vector2;
-import java.util.Random;
-
 
 public class Map {
     private Tile[][] tiles;
@@ -18,6 +15,8 @@ public class Map {
     private int width;
     private int height;
     private int tileSize = 32;
+    private String grassTexturePath = "grass.png";
+    private String forestTexturePath = "forest.png";
 
     public Map(int width, int height) {
         this.width = width;
@@ -27,6 +26,7 @@ public class Map {
         units = new ArrayList<>();
         generateMap();
     }
+
     private boolean isPositionValid(Vector2 position, Set<Vector2> occupiedPositions) {
         int[][] directions = {
                 {-1, -1}, {-1, 0}, {-1, 1},
@@ -51,9 +51,11 @@ public class Map {
     private void generateMap() {
         Random random = new Random();
 
+        // Генерация тайлов карты (трава или лес)
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                tiles[x][y] = new Tile("grass.png", x * tileSize, y * tileSize);
+                String texturePath = random.nextFloat() < 0.2f ? forestTexturePath : grassTexturePath; // 20% вероятность леса
+                tiles[x][y] = new Tile(texturePath, x * tileSize, y * tileSize);
             }
         }
 
@@ -84,7 +86,6 @@ public class Map {
             }
         }
     }
-
 
     public void render(SpriteBatch batch) {
         for (int x = 0; x < width; x++) {
