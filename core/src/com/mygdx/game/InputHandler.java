@@ -48,13 +48,15 @@ public class InputHandler extends InputAdapter {
                 if (building.contains(touchPos.x, touchPos.y)) {
                     if (!map.isCellOccupied(building.getPosition())) {
                         int currentPlayer = gameState.getCurrentPlayer();
-                        if (economy.spendResources(currentPlayer, building.getUnitCost())) {
-                            Unit newUnit = building.hireUnit(currentPlayer);
-                            if (newUnit != null) {
-                                units.add(newUnit);
+                        if (building.getOwner() == currentPlayer) {
+                            if (economy.spendResources(currentPlayer, building.getUnitCost())) {
+                                Unit newUnit = building.hireUnit(currentPlayer);
+                                if (newUnit != null) {
+                                    units.add(newUnit);
+                                }
+                            } else {
+                                System.out.println("Недостаточно ресурсов для найма юнита!");
                             }
-                        } else {
-                            System.out.println("Недостаточно ресурсов для найма юнита!");
                         }
                     }
                     return true;
@@ -64,24 +66,32 @@ public class InputHandler extends InputAdapter {
             // Проверка нажатия на вражеского юнита для атаки
             for (Unit unit : units) {
                 if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() != gameState.getCurrentPlayer()) {
-                    selectedUnit.attack(unit);
-                    removeDeadUnits();
-                    selectedUnit = null;
-                    game.clearHighlightedTiles();
-                    gameState.endTurn();
+                    if (selectedUnit.isWithinAttackRange(unit.getPosition())) {
+                        selectedUnit.attack(unit);
+                        removeDeadUnits();
+                        selectedUnit = null;
+                        game.clearHighlightedTiles();
+                        gameState.endTurn();
+                    } else {
+                        System.out.println("Вне радиуса атаки!");
+                    }
                     return true;
                 }
             }
             // Проверка нажатия на здание для атаки
             for (Building building : map.getBuildings()) {
                 if (building.contains(touchPos.x, touchPos.y) && building.getOwner() != gameState.getCurrentPlayer()) {
-                    selectedUnit.attack(building);
-                    if (building.getHealth() <= 0) {
-                        building.setOwner(selectedUnit.getOwner());
+                    if (selectedUnit.isWithinAttackRange(building.getPosition())) {
+                        selectedUnit.attack(building);
+                        if (building.getHealth() <= 0) {
+                            building.setOwner(selectedUnit.getOwner());
+                        }
+                        selectedUnit = null;
+                        game.clearHighlightedTiles();
+                        gameState.endTurn();
+                    } else {
+                        System.out.println("Вне радиуса атаки!");
                     }
-                    selectedUnit = null;
-                    game.clearHighlightedTiles();
-                    gameState.endTurn();
                     return true;
                 }
             }
@@ -115,6 +125,7 @@ public class InputHandler extends InputAdapter {
         }
         return false;
     }
+
 
     private void removeDeadUnits() {
         Iterator<Unit> iterator = units.iterator();

@@ -71,6 +71,11 @@ public class Unit {
         return distance <= attackRange;
     }
 
+    public boolean isWithinRange(Vector2 targetPosition, int range) {
+        float distance = position.dst(targetPosition);
+        return distance <= range;
+    }
+
     public void attack(Unit target) {
         if (isWithinAttackRange(target.getPosition())) {
             int damage = attack - (target.getDefense() * attack / 100);
