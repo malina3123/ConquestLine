@@ -28,9 +28,16 @@ public class InputHandler extends InputAdapter {
         Gdx.input.setInputProcessor(this);
     }
 
+    public void updateMapAndUnits(Map newMap, List<Unit> newUnits) {
+        this.map = newMap;
+        this.units = newUnits;
+    }
+
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 touchPos3D = new Vector3(screenX, screenY, 0);
+        units = map.getUnits();
+        List<Building> buildings = map.getBuildings();
         camera.unproject(touchPos3D);
         Vector2 touchPos = new Vector2(touchPos3D.x, touchPos3D.y);
 
@@ -125,6 +132,15 @@ public class InputHandler extends InputAdapter {
         }
         return false;
     }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        camera.translate(-Gdx.input.getDeltaX(), Gdx.input.getDeltaY());
+        camera.update();
+        return true;
+    }
+
+
 
 
     private void removeDeadUnits() {

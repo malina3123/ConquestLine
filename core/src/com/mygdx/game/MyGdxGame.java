@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	Stage stage;
 	Skin skin;
 	TextButton generateButton;
+	TextButton endTurnButton;
 	InputHandler inputHandler;
 	ShapeRenderer shapeRenderer;
 	List<Vector2> highlightedTiles;
@@ -43,7 +45,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		textBatch = new SpriteBatch();
 		economy = new Economy();
 		map = new Map(20, 15);
-		units = new ArrayList<>();
+		units = map.getUnits();
 		selectedUnit = null;
 		shapeRenderer = new ShapeRenderer();
 		highlightedTiles = new ArrayList<>();
@@ -78,7 +80,22 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		});
 
+		endTurnButton = new TextButton("Закончить ход", skin);
+		endTurnButton.setPosition(Gdx.graphics.getWidth() / 2f - endTurnButton.getWidth() / 2f, Gdx.graphics.getHeight() - endTurnButton.getHeight() - 70);
+		endTurnButton.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				return true;
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				endTurn();
+			}
+		});
+
 		stage.addActor(generateButton);
+		stage.addActor(endTurnButton);
 
 		inputHandler = new InputHandler(camera, map, units, this, gameState, economy);
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputHandler));
@@ -87,16 +104,20 @@ public class MyGdxGame extends ApplicationAdapter {
 	}
 
 	private void initializeGame() {
-		economy.setResources(1, 1000); // Установите начальные ресурсы для игрока 1
-		economy.setResources(2, 1000); // Установите начальные ресурсы для игрока 2
 		gameState.setCurrentPlayer(1); // Начинает игрок 1
 	}
 
 	private void createNewMap() {
 		map = new Map(20, 15);
-		units.clear();
+		units = map.getUnits(); // Обновление списка юнитов
+		gameState.setBuildings(map.getBuildings());
+		inputHandler.updateMapAndUnits(map, units); // Обновление карты и юнитов в обработчике ввода
 		centerCamera();
-		initializeGame(); // Инициализация ресурсов и начального игрока при создании новой карты
+		initializeGame(); // Инициализация начального игрока при создании новой карты
+	}
+
+	private void endTurn() {
+		gameState.endTurn();
 	}
 
 	@Override
@@ -170,6 +191,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		centerCamera();
 		stage.getViewport().update(width, height, true);
 		generateButton.setPosition(width / 2f - generateButton.getWidth() / 2f, height - generateButton.getHeight() - 10);
+		endTurnButton.setPosition(width / 2f - endTurnButton.getWidth() / 2f, height - endTurnButton.getHeight() - 70);
 	}
 
 	@Override
@@ -180,9 +202,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		for (Unit unit : units) {
 			unit.dispose();
 		}
-		stage.dispose();
-		skin.dispose();
-		font.dispose();
 		shapeRenderer.dispose();
+		stage.dispose();
+		if (skin != null) {
+			skin.dispose();
+		}
 	}
 }

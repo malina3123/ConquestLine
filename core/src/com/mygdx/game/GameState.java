@@ -7,24 +7,29 @@ public class GameState {
     private Economy economy;
     private List<Building> buildings;
 
-
     public GameState(Economy economy, List<Building> buildings) {
         this.economy = economy;
         this.buildings = buildings;
-        currentPlayer = 1;
+        this.currentPlayer = 1; // Начальный игрок
     }
-
 
     public int getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int player) {
-        this.currentPlayer = player;
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public void setBuildings(List<Building> buildings) {
+        this.buildings = buildings;
     }
 
     public void endTurn() {
+        // Начисление валюты за контроль зданий текущему игроку
         economy.endTurn(currentPlayer, buildings);
-        currentPlayer = 3 - currentPlayer; // Переключаемся между 1 и 2
+
+        // Переключение на следующего игрока
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;
     }
 }
