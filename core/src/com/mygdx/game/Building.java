@@ -33,7 +33,7 @@ public class Building {
 
         // Инициализация случайного значения защиты и установка здоровья на 200
         Random random = new Random();
-        defense = random.nextInt(81) + 10; // Диапазон от 10 до 90
+        defense = random.nextInt(10) + 10;
         maxHealth = 200; // Максимальное здоровье по умолчанию
         health = maxHealth; // Здоровье по умолчанию
 
@@ -85,7 +85,6 @@ public class Building {
                 texture = neutralTexture;
                 break;
         }
-        health = maxHealth; // Обновляем здоровье до максимального при смене владельца
     }
 
     public void receiveDamage(int damage, int attackerOwner) {
@@ -93,6 +92,7 @@ public class Building {
         if (health <= 0) {
             health = 0;
             setOwner(attackerOwner); // Здание меняет владельца на атакующего игрока
+            health = maxHealth; // Обновляем здоровье до максимального при смене владельца
         }
     }
 

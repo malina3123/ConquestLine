@@ -134,9 +134,6 @@ public class InputHandler extends InputAdapter {
     }
 
 
-
-
-
     private void removeDeadUnits() {
         Iterator<Unit> iterator = units.iterator();
         while (iterator.hasNext()) {
