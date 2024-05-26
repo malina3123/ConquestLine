@@ -27,11 +27,9 @@ public class ReloadGame extends Game {
         };
         dialog.button("Кнопка 1", true);
         dialog.button("Отмена", false);
-        // Отобразить диалог когда экран показывается
         dialog.show(stage);
     }
 
-    // Реализуйте оставшиеся методы интерфейса Screen (resize, pause, resume, hide, dispose)
 
     @Override
     public void dispose() {

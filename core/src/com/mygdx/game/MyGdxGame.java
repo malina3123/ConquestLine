@@ -318,7 +318,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		int owner = inputHandler.getGameState().getCurrentPlayer();
 		Texture unitTexture = (owner == 1) ? player1UnitTexture : player2UnitTexture;
 		if (economy.getResources(owner) >= 200){
-			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 12 * 32, owner, 2));
+			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 3 * 32, owner, 2));
 		}
 		Shopping = Boolean.FALSE;
 		economy.spendResources(owner, 200);
@@ -328,7 +328,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		int owner = inputHandler.getGameState().getCurrentPlayer();
 		Texture unitTexture = (owner == 1) ? player1RangerTexture : player2RangerTexture;
 		if (economy.getResources(owner) >= 300){
-			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 3 * 32, owner, 3));
+			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 5 * 32, owner, 3));
 		}
 		Shopping = Boolean.FALSE;
 		economy.spendResources(owner, 300);
@@ -338,7 +338,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		int owner = inputHandler.getGameState().getCurrentPlayer();
 		Texture unitTexture = (owner == 1) ? player1HorseTexture : player2HorseTexture;
 		if (economy.getResources(owner) >= 250){
-			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 5 * 32, owner, 2));
+			inputHandler.addUnit(new Unit(unitTexture, position.x, position.y, 8 * 32, owner, 2));
 		}
 		Shopping = Boolean.FALSE;
 		economy.spendResources(owner, 250);

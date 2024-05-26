@@ -14,7 +14,7 @@ public class Unit {
     private int owner;
     private int health;
     private int defense;
-    private int attack; // Добавим атрибут атаки
+    private int attack;
     private BitmapFont font;
     private boolean step;
 
@@ -69,7 +69,7 @@ public class Unit {
     public boolean isWithinAttackRange(Vector2 targetPosition) {
         float distance = position.dst(targetPosition);
         int tileSize = 32;
-        int attackRange = rangeAtack * tileSize; // Дистанция атаки в клетках (2 клетки)
+        int attackRange = rangeAtack * tileSize;
 
         return distance <= attackRange;
     }
@@ -82,7 +82,7 @@ public class Unit {
     public void attack(Unit target) {
         if (isWithinAttackRange(target.getPosition())) {
             int damage = attack - (target.getDefense() * attack / 100);
-            damage = Math.max(1, damage); // Урон не может быть меньше 1
+            damage = Math.max(1, damage);
             target.receiveDamage(damage);
         }
     }
@@ -90,8 +90,8 @@ public class Unit {
     public void attack(Building building) {
         if (isWithinAttackRange(building.getPosition())) {
             int damage = attack - (building.getDefense() * attack / 100);
-            damage = Math.max(1, damage); // Урон не может быть меньше 1
-            building.receiveDamage(damage, owner); // Передаем владельца атакующего
+            damage = Math.max(1, damage);
+            building.receiveDamage(damage, owner);
         }
     }
 
@@ -130,7 +130,6 @@ public class Unit {
 
 
     private void die() {
-        // Можно добавить дополнительные действия при смерти юнита, если нужно
         System.out.println("Unit has died");
     }
 

@@ -10,7 +10,7 @@ public class GameState {
     public GameState(Economy economy, List<Building> buildings) {
         this.economy = economy;
         this.buildings = buildings;
-        this.currentPlayer = 1; // Начальный игрок
+        this.currentPlayer = 1;
     }
 
     public int getCurrentPlayer() {
@@ -26,10 +26,8 @@ public class GameState {
     }
 
     public void endTurn() {
-        // Начисление валюты за контроль зданий текущему игроку
         economy.endTurn(currentPlayer, buildings);
         InputHandler.updateSteps();
-        // Переключение на следующего игрока
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
 
     }

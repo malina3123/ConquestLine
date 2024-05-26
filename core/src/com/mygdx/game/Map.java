@@ -51,21 +51,21 @@ public class Map {
     private void generateMap() {
         Random random = new Random();
 
-        // Генерация тайлов карты (трава или лес)
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                String texturePath = random.nextFloat() < 0.2f ? forestTexturePath : grassTexturePath; // 20% вероятность леса
+                String texturePath = random.nextFloat() < 0.4f ? forestTexturePath : grassTexturePath; // 20% вероятность леса
                 tiles[x][y] = new Tile(texturePath, x * tileSize, y * tileSize);
             }
         }
 
-        // Генерация зданий для игрока 1 и игрока 2
+
         buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", 0 * tileSize, 0 * tileSize));
         buildings.get(0).setOwner(1);
         buildings.add(new Building("neutral_building.png", "player1_building.png", "player2_building.png", "player1_unit.png", "player2_unit.png", (width - 1) * tileSize, (height - 1) * tileSize));
         buildings.get(1).setOwner(2);
 
-        // Генерация нейтральных зданий
+
         int neutralBuildingCount = 8;
         Set<Vector2> occupiedPositions = new HashSet<>();
         occupiedPositions.add(new Vector2(0, 0));

@@ -47,6 +47,90 @@ public class InputHandler extends InputAdapter {
                 System.out.println(unit.isStep());
             }
         }
+        if (selectedUnit == null) {
+            for (Unit unit : units) {
+                if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer() && !unit.isStep()) {
+                    selectedUnit = unit;
+                    game.setHighlightedTiles(map.getMovableTiles(unit));
+                    return true;
+                }
+            }
+            // Проверка нажатия на здание для найма юнита
+            for (Building building : map.getBuildings()) {
+                if (building.contains(touchPos.x, touchPos.y)) {
+                    if (!map.isCellOccupied(building.getPosition())) {
+                        int currentPlayer = gameState.getCurrentPlayer();
+                        if (building.getOwner() == currentPlayer) {
+                            game.setShopping(Boolean.TRUE);
+                            game.setPosition(building.getPosition());
+                        }
+                    }
+                    return true;
+                }
+            }
+        } else {
+            for (Unit unit : units) {
+                if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() != gameState.getCurrentPlayer()) {
+                    if (selectedUnit.isWithinAttackRange(unit.getPosition())) {
+                        selectedUnit.attack(unit);
+                        removeDeadUnits();
+                        selectedUnit.setStep(Boolean.TRUE);
+                        selectedUnit = null;
+                        game.clearHighlightedTiles();
+                    } else {
+                        System.out.println("Вне радиуса атаки!");
+                    }
+                    return true;
+                }
+            }
+            // Проверка нажатия на здание для атаки
+            for (Building building : map.getBuildings()) {
+                if (building.contains(touchPos.x, touchPos.y) && building.getOwner() != gameState.getCurrentPlayer()) {
+                    if (selectedUnit.isWithinAttackRange(building.getPosition())) {
+                        selectedUnit.attack(building);
+                        if (building.getHealth() <= 0) {
+                            building.setOwner(selectedUnit.getOwner());
+                        }
+                        if (BuldingIs()){
+                            VictoryNotification victoryNotification = new VictoryNotification(gameState.getCurrentPlayer());
+                            victoryNotification.run();
+                            game.Destroy();
+                        }
+                        selectedUnit.setStep(Boolean.TRUE);
+                        selectedUnit = null;
+                        game.clearHighlightedTiles();
+                    } else {
+                        System.out.println("Вне радиуса атаки!");
+                    }
+                    return true;
+                }
+            }
+            if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
+                for (Unit unit : units) {
+                    if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer()) {
+                        return false;
+                    }
+                }
+
+                int tileSize = map.getTileSize();
+                float targetX = (float) Math.floor(touchPos.x / tileSize) * tileSize;
+                float targetY = (float) Math.floor(touchPos.y / tileSize) * tileSize;
+                selectedUnit.moveTo(targetX, targetY);
+
+                for (Building building : map.getBuildings()) {
+                    if (building.getPosition().dst(selectedUnit.getPosition()) < 16) {
+                        building.setOwner(selectedUnit.getOwner());
+                    }
+                }
+                selectedUnit.setStep(Boolean.TRUE);
+                selectedUnit = null;
+                game.clearHighlightedTiles();
+            } else {
+                selectedUnit = null;
+                game.clearHighlightedTiles();
+            }
+        }
+
         if (allStep()){
             for (Unit unit:units){
                 if (unit.getOwner() == gameState.getCurrentPlayer()){
@@ -54,95 +138,8 @@ public class InputHandler extends InputAdapter {
                 }
             }
             gameState.endTurn();
-        }else {
-            if (selectedUnit == null) {
-                // Проверка нажатия на юнита текущего игрока
-                for (Unit unit : units) {
-                    if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer() && !unit.isStep()) {
-                        selectedUnit = unit;
-                        game.setHighlightedTiles(map.getMovableTiles(unit));
-                        return true;
-                    }
-                }
-                // Проверка нажатия на здание для найма юнита
-                for (Building building : map.getBuildings()) {
-                    if (building.contains(touchPos.x, touchPos.y)) {
-                        if (!map.isCellOccupied(building.getPosition())) {
-                            int currentPlayer = gameState.getCurrentPlayer();
-                            if (building.getOwner() == currentPlayer) {
-                                game.setShopping(Boolean.TRUE);
-                                game.setPosition(building.getPosition());
-                            }
-                        }
-                        return true;
-                    }
-                }
-            } else {
-                // Проверка нажатия на вражеского юнита для атаки
-                for (Unit unit : units) {
-                    if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() != gameState.getCurrentPlayer()) {
-                        if (selectedUnit.isWithinAttackRange(unit.getPosition())) {
-                            selectedUnit.attack(unit);
-                            removeDeadUnits();
-                            selectedUnit.setStep(Boolean.TRUE);
-                            selectedUnit = null;
-                            game.clearHighlightedTiles();
-                        } else {
-                            System.out.println("Вне радиуса атаки!");
-                        }
-                        return true;
-                    }
-                }
-                // Проверка нажатия на здание для атаки
-                for (Building building : map.getBuildings()) {
-                    if (building.contains(touchPos.x, touchPos.y) && building.getOwner() != gameState.getCurrentPlayer()) {
-                        if (selectedUnit.isWithinAttackRange(building.getPosition())) {
-                            selectedUnit.attack(building);
-                            if (building.getHealth() <= 0) {
-                                building.setOwner(selectedUnit.getOwner());
-                            }
-                            if (BuldingIs()){
-                                VictoryNotification victoryNotification = new VictoryNotification(gameState.getCurrentPlayer());
-                                victoryNotification.run();
-                                game.Destroy();
-                            }
-                            selectedUnit.setStep(Boolean.TRUE);
-                            selectedUnit = null;
-                            game.clearHighlightedTiles();
-                        } else {
-                            System.out.println("Вне радиуса атаки!");
-                        }
-                        return true;
-                    }
-                }
-                // Перемещение выбранного юнита и захват здания
-                if (selectedUnit.canMoveTo(touchPos.x, touchPos.y, map) && !map.isCellOccupied(touchPos)) {
-                    // Проверка на наличие союзного юнита в целевой клетке
-                    for (Unit unit : units) {
-                        if (unit.contains(touchPos.x, touchPos.y) && unit.getOwner() == gameState.getCurrentPlayer()) {
-                            return false; // Если целевая клетка занята союзным юнитом, просто не реагируем
-                        }
-                    }
-
-                    int tileSize = map.getTileSize();
-                    float targetX = (float) Math.floor(touchPos.x / tileSize) * tileSize;
-                    float targetY = (float) Math.floor(touchPos.y / tileSize) * tileSize;
-                    selectedUnit.moveTo(targetX, targetY);
-
-                    for (Building building : map.getBuildings()) {
-                        if (building.getPosition().dst(selectedUnit.getPosition()) < 16) {
-                            building.setOwner(selectedUnit.getOwner());
-                        }
-                    }
-                    selectedUnit.setStep(Boolean.TRUE);
-                    selectedUnit = null;
-                    game.clearHighlightedTiles();
-                } else {
-                    selectedUnit = null;
-                    game.clearHighlightedTiles();
-                }
-            }
         }
+
 
         return false;
     }
@@ -161,6 +158,7 @@ public class InputHandler extends InputAdapter {
     private Boolean IsFinished(){
         return Boolean.FALSE;
     }
+
     public Unit getSelectedUnit() {
         return selectedUnit;
     }

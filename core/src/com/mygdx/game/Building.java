@@ -14,10 +14,10 @@ public class Building {
     private Vector2 position;
     private Texture player1UnitTexture;
     private Texture player2UnitTexture;
-    private int owner; // 0 - нейтральное, 1 - игрок 1, 2 - игрок 2
-    private int defense; // Защита здания
-    private int health; // Здоровье здания
-    private int maxHealth; // Максимальное здоровье здания
+    private int owner;
+    private int defense;
+    private int health;
+    private int maxHealth;
     private BitmapFont font;
     private int unitCost = 200;
 
@@ -31,18 +31,17 @@ public class Building {
         position = new Vector2(x, y);
         owner = 0; // По умолчанию нейтральное
 
-        // Инициализация случайного значения защиты и установка здоровья на 200
+
         Random random = new Random();
         defense = random.nextInt(10) + 10;
-        maxHealth = 10; // Максимальное здоровье по умолчанию
-        health = maxHealth; // Здоровье по умолчанию
+        maxHealth = 150;
+        health = maxHealth;
 
-        font = new BitmapFont(); // Инициализация шрифта для отображения текста
+        font = new BitmapFont();
     }
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
-        // Отображение значения здоровья и защиты над зданием
         font.draw(batch, "HP: " + health + " DEF: " + defense, position.x, position.y + texture.getHeight() + 15);
     }
 
@@ -81,8 +80,8 @@ public class Building {
         health -= damage;
         if (health <= 0) {
             health = 0;
-            setOwner(attackerOwner); // Здание меняет владельца на атакующего игрока
-            health = maxHealth; // Обновляем здоровье до максимального при смене владельца
+            setOwner(attackerOwner);
+            health = maxHealth;
         }
     }
 
@@ -104,6 +103,6 @@ public class Building {
         player2Texture.dispose();
         player1UnitTexture.dispose();
         player2UnitTexture.dispose();
-        font.dispose(); // Освобождение ресурса шрифта
+        font.dispose();
     }
 }
